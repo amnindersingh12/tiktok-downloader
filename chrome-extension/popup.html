@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok & YouTube Downloader</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎵 Media Downloader</h1>
+      <p class="quality-badge">HD Quality</p>
+    </div>
+    
+    <div class="status-section">
+      <div id="server-status" class="status">
+        <span class="status-dot"></span>
+        <span class="status-text">Checking server...</span>
+      </div>
+    </div>
+
+    <!-- Tab navigation -->
+    <div class="tabs">
+      <button class="tab active" data-tab="tiktok">
+        <span>🎬</span> TikTok
+      </button>
+      <button class="tab" data-tab="youtube">
+        <span>🎶</span> YouTube Music
+      </button>
+    </div>
+
+    <!-- TikTok Tab -->
+    <div id="tiktok-tab" class="tab-content active">
+      <div id="auto-detect" class="auto-detect-section">
+        <div class="video-preview">
+          <img id="video-thumbnail" src="" alt="Video thumbnail">
+          <div class="video-info">
+            <p id="video-title" class="video-title">Detecting video...</p>
+            <p id="video-author" class="video-author"></p>
+          </div>
+        </div>
+        <button id="download-current" class="download-current-btn">
+          <span class="btn-icon">⬇️</span>
+          <span class="btn-text">Download This Video (HD)</span>
+          <span class="btn-loader" style="display: none;"></span>
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>or enter URL manually</span>
+      </div>
+
+      <div class="input-section">
+        <input type="text" id="video-url" placeholder="Paste TikTok URL here...">
+        <button id="download-btn" class="download-btn">
+          <span class="btn-text">Download Video</span>
+          <span class="btn-loader" style="display: none;"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- YouTube Tab -->
+    <div id="youtube-tab" class="tab-content">
+      <div id="yt-auto-detect" class="auto-detect-section youtube">
+        <div class="video-preview">
+          <img id="yt-thumbnail" src="" alt="Video thumbnail">
+          <div class="video-info">
+            <p id="yt-title" class="video-title">Detecting YouTube Shorts...</p>
+            <p id="yt-author" class="video-author"></p>
+          </div>
+        </div>
+        <button id="download-yt-current" class="download-current-btn youtube-btn">
+          <span class="btn-icon">🎵</span>
+          <span class="btn-text">Download Music (MP3 320kbps)</span>
+          <span class="btn-loader" style="display: none;"></span>
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>or enter URL manually</span>
+      </div>
+
+      <div class="input-section">
+        <input type="text" id="yt-url" placeholder="Paste YouTube Shorts URL here...">
+        <button id="download-yt-btn" class="download-btn youtube-btn">
+          <span class="btn-text">Download Music</span>
+          <span class="btn-loader" style="display: none;"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="progress-section" class="progress-section" style="display: none;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <p id="progress-text">Downloading...</p>
+    </div>
+
+    <div id="result" class="result" style="display: none;"></div>
+
+    <div class="footer">
+      <p>Make sure the local server is running</p>
+      <code>python server.py</code>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
