@@ -16,8 +16,11 @@ A simple Chrome extension + Python server to download TikTok videos (without wat
 - 🔒 No accounts, no tracking, no BS
 
 ## 📸 Screenshots
+![TikTok Download Button](screenshots/demo.png)
 
-*Coming soon - contributions welcome!*
+## Demo Video
+![Demo](screenshots/output.gif)
+
 
 ## 🚀 Quick Start
 
