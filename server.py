@@ -199,8 +199,8 @@ if __name__ == '__main__':
     print("TikTok & YouTube Shorts Downloader Server")
     print("=" * 50)
     print(f"Downloads will be saved to: {DOWNLOAD_FOLDER}")
-    print("Server running at: http://localhost:5000")
+    print("Server running at: http://localhost:5001")
     print("Press Ctrl+C to stop")
     print("=" * 50)
     
-    app.run(host='127.0.0.1', port=5000, debug=False)
+    app.run(host='127.0.0.1', port=5001, debug=False)
