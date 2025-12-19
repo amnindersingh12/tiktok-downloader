@@ -28,10 +28,10 @@
       `;
 
       try {
-        const response = await fetch(`${SERVER_URL}/youtube/download`, {
+        const response = await fetch(`${SERVER_URL}/download-youtube`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: videoUrl }),
+          body: JSON.stringify({ url: videoUrl, audio_only: true }),
         });
 
         const data = await response.json();

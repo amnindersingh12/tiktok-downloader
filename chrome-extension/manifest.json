@@ -11,8 +11,9 @@
     "https://www.tiktok.com/*",
     "https://www.youtube.com/*",
     "https://youtube.com/*",
+    "https://music.youtube.com/*",
     "https://youtu.be/*",
-    "http://localhost:5000/*"
+    "http://localhost:5001/*"
   ],
   "action": {
     "default_popup": "popup.html",

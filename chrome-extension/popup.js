@@ -91,9 +91,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           return;
         }
         
-        // Check for YouTube Shorts
-        if (tab.url.includes('youtube.com/shorts/') || 
-            (tab.url.includes('youtube.com/watch') && tab.url.includes('v='))) {
+        // Check for YouTube (Shorts/watch) and YouTube Music
+        if (tab.url.includes('youtube.com/shorts/') ||
+          (tab.url.includes('youtube.com/watch') && tab.url.includes('v=')) ||
+          (tab.url.includes('music.youtube.com/watch') && tab.url.includes('v='))) {
           currentYtUrl = tab.url;
           ytUrlInput.value = tab.url;
           ytAutoDetectSection.style.display = 'block';
@@ -150,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Fetch YouTube video info
   async function fetchYouTubeInfo(url) {
     try {
-      const response = await fetch(`${SERVER_URL}/youtube/info`, {
+      const response = await fetch(`${SERVER_URL}/info`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
@@ -158,19 +159,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       const data = await response.json();
       
-      if (data.success) {
+      if (data && !data.error) {
         ytTitle.textContent = data.title || 'YouTube Video';
         ytAuthor.textContent = data.author ? `@${data.author}` : '';
         if (data.thumbnail) {
           ytThumbnail.src = data.thumbnail;
           ytThumbnail.style.display = 'block';
         }
-      } else {
-        ytTitle.textContent = 'YouTube Shorts (Ready to download)';
+        return;
       }
+
+      ytTitle.textContent = 'YouTube (Ready to download)';
     } catch (e) {
       console.error('Failed to fetch YouTube info:', e);
-      ytTitle.textContent = 'YouTube Shorts (Ready to download)';
+      ytTitle.textContent = 'YouTube (Ready to download)';
     }
   }
 
@@ -226,7 +228,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    if (!url.includes('youtube.com') && !url.includes('youtu.be')) {
+    if (!url.includes('youtube.com') && !url.includes('youtu.be') && !url.includes('music.youtube.com')) {
       showResult('Please enter a valid YouTube URL', 'error');
       return;
     }
@@ -242,16 +244,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     setButtonLoading(downloadYtCurrentBtn, true);
 
     try {
-      const response = await fetch(`${SERVER_URL}/youtube/download`, {
+      const response = await fetch(`${SERVER_URL}/download-youtube`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, audio_only: true }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        showResult(`✅ Downloaded: ${data.filename} (${data.quality})`, 'success');
+        showResult(`✅ Downloaded: ${data.filename}`, 'success');
       } else {
         showResult(`❌ Error: ${data.error}`, 'error');
       }

@@ -27,7 +27,7 @@ def validate_tiktok_url(url):
 
 def validate_youtube_url(url):
     """Check if URL is a valid YouTube URL"""
-    pattern = r'https?://(www\.)?(youtube\.com|youtu\.be)/.*'
+    pattern = r'https?://((www|m|music)\.)?(youtube\.com|youtu\.be)/.*'
     return bool(re.match(pattern, url))
 
 
@@ -65,10 +65,11 @@ def download_video(url, output_path):
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        return True
+        return True, None
     except Exception as e:
-        print(f"Download error: {e}")
-        return False
+        err = str(e)
+        print(f"Download error: {err}")
+        return False, err
 
 
 def download_audio(url, output_path):
@@ -89,10 +90,41 @@ def download_audio(url, output_path):
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        return True
+        return True, None
     except Exception as e:
-        print(f"Audio download error: {e}")
-        return False
+        err = str(e)
+        print(f"Audio download error: {err}")
+        # Common case: ffmpeg missing
+        if 'ffmpeg' in err.lower() or 'ffprobe' in err.lower():
+            err = 'ffmpeg/ffprobe not found. Install ffmpeg and try again.'
+        return False, err
+
+
+def _handle_youtube_download(url, audio_only=True):
+    """Shared YouTube download implementation for multiple routes."""
+    # Generate filename
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+    if audio_only:
+        filename = f'youtube_{timestamp}'  # Extension added by yt-dlp
+        output_path = os.path.join(DOWNLOAD_FOLDER, filename)
+        success, error = download_audio(url, output_path)
+        final_path = output_path + '.mp3'
+    else:
+        filename = f'youtube_{timestamp}.mp4'
+        output_path = os.path.join(DOWNLOAD_FOLDER, filename)
+        success, error = download_video(url, output_path)
+        final_path = output_path
+
+    if success:
+        return jsonify({
+            'success': True,
+            'message': 'Download completed',
+            'filename': os.path.basename(final_path),
+            'path': final_path
+        })
+
+    return jsonify({'error': error or 'Download failed'}), 500
 
 
 # ============================================
@@ -139,7 +171,7 @@ def download():
     output_path = os.path.join(DOWNLOAD_FOLDER, filename)
     
     # Download
-    success = download_video(url, output_path)
+    success, error = download_video(url, output_path)
     
     if success and os.path.exists(output_path):
         return jsonify({
@@ -149,7 +181,7 @@ def download():
             'path': output_path
         })
     else:
-        return jsonify({'error': 'Download failed'}), 500
+        return jsonify({'error': error or 'Download failed'}), 500
 
 
 @app.route('/download-youtube', methods=['POST'])
@@ -164,30 +196,42 @@ def download_youtube():
     
     if not validate_youtube_url(url):
         return jsonify({'error': 'Invalid YouTube URL'}), 400
-    
-    # Generate filename
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    
-    if audio_only:
-        filename = f'youtube_{timestamp}'  # Extension added by yt-dlp
-        output_path = os.path.join(DOWNLOAD_FOLDER, filename)
-        success = download_audio(url, output_path)
-        final_path = output_path + '.mp3'
-    else:
-        filename = f'youtube_{timestamp}.mp4'
-        output_path = os.path.join(DOWNLOAD_FOLDER, filename)
-        success = download_video(url, output_path)
-        final_path = output_path
-    
-    if success:
-        return jsonify({
-            'success': True,
-            'message': 'Download completed',
-            'filename': os.path.basename(final_path),
-            'path': final_path
-        })
-    else:
-        return jsonify({'error': 'Download failed'}), 500
+
+    return _handle_youtube_download(url, audio_only=audio_only)
+
+
+# Backwards-compatible routes (older extension versions)
+@app.route('/youtube/info', methods=['POST'])
+def get_youtube_info_compat():
+    data = request.json
+    url = data.get('url', '')
+
+    if not url:
+        return jsonify({'success': False, 'error': 'No URL provided'}), 400
+
+    if not validate_youtube_url(url):
+        return jsonify({'success': False, 'error': 'Invalid YouTube URL'}), 400
+
+    info = get_video_info(url)
+    if 'error' in info:
+        return jsonify({'success': False, 'error': info['error']}), 400
+
+    return jsonify({'success': True, **info})
+
+
+@app.route('/youtube/download', methods=['POST'])
+def download_youtube_compat():
+    data = request.json
+    url = data.get('url', '')
+    audio_only = data.get('audio_only', True)
+
+    if not url:
+        return jsonify({'error': 'No URL provided'}), 400
+
+    if not validate_youtube_url(url):
+        return jsonify({'error': 'Invalid YouTube URL'}), 400
+
+    return _handle_youtube_download(url, audio_only=audio_only)
 
 
 # ============================================
