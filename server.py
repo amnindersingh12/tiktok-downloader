@@ -37,6 +37,12 @@ def get_video_info(url):
         'quiet': True,
         'no_warnings': True,
         'extract_flat': False,
+        # TikTok workaround - use cookies from browser
+        'cookiesfrombrowser': ('chrome',),
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Referer': 'https://www.tiktok.com/',
+        },
     }
     
     try:
@@ -60,6 +66,12 @@ def download_video(url, output_path):
         'noplaylist': True,
         'quiet': True,
         'no_warnings': True,
+        # TikTok workaround - use cookies from Chrome browser
+        'cookiesfrombrowser': ('chrome',),
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Referer': 'https://www.tiktok.com/',
+        },
     }
     
     try:
