@@ -21,6 +21,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const ytUrlInput = document.getElementById('yt-url');
   const downloadYtBtn = document.getElementById('download-yt-btn');
   const downloadYtCurrentBtn = document.getElementById('download-yt-current');
+  const downloadYtVideoBtn = document.getElementById('download-yt-video-btn');
+  const downloadYtVideoCurrentBtn = document.getElementById('download-yt-video-current');
   const ytAutoDetectSection = document.getElementById('yt-auto-detect');
   const ytThumbnail = document.getElementById('yt-thumbnail');
   const ytTitle = document.getElementById('yt-title');
@@ -222,7 +224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   
   // Download YouTube music
-  async function downloadYouTube(url) {
+  async function downloadYouTube(url, audioOnly = true) {
     if (!url) {
       showResult('Please enter a YouTube URL', 'error');
       return;
@@ -239,15 +241,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    showProgress('Downloading YouTube music...');
+    const downloadType = audioOnly ? 'music' : 'video';
+    showProgress(`Downloading YouTube ${downloadType}...`);
     setButtonLoading(downloadYtBtn, true);
     setButtonLoading(downloadYtCurrentBtn, true);
+    setButtonLoading(downloadYtVideoBtn, true);
+    setButtonLoading(downloadYtVideoCurrentBtn, true);
 
     try {
       const response = await fetch(`${SERVER_URL}/download-youtube`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, audio_only: true }),
+        body: JSON.stringify({ url, audio_only: audioOnly }),
       });
 
       const data = await response.json();
@@ -263,6 +268,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       hideProgress();
       setButtonLoading(downloadYtBtn, false);
       setButtonLoading(downloadYtCurrentBtn, false);
+      setButtonLoading(downloadYtVideoBtn, false);
+      setButtonLoading(downloadYtVideoCurrentBtn, false);
     }
   }
 
@@ -329,15 +336,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // Event listeners - YouTube
   downloadYtBtn.addEventListener('click', () => {
-    downloadYouTube(ytUrlInput.value.trim());
+    downloadYouTube(ytUrlInput.value.trim(), true);
   });
 
   downloadYtCurrentBtn.addEventListener('click', () => {
-    downloadYouTube(currentYtUrl || ytUrlInput.value.trim());
+    downloadYouTube(currentYtUrl || ytUrlInput.value.trim(), true);
+  });
+
+  downloadYtVideoBtn.addEventListener('click', () => {
+    downloadYouTube(ytUrlInput.value.trim(), false);
+  });
+
+  downloadYtVideoCurrentBtn.addEventListener('click', () => {
+    downloadYouTube(currentYtUrl || ytUrlInput.value.trim(), false);
   });
 
   ytUrlInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') downloadYouTube(ytUrlInput.value.trim());
+    if (e.key === 'Enter') downloadYouTube(ytUrlInput.value.trim(), true);
   });
 
   // Initialize

@@ -70,11 +70,18 @@
             <p id="yt-author" class="video-author"></p>
           </div>
         </div>
-        <button id="download-yt-current" class="download-current-btn youtube-btn">
-          <span class="btn-icon">🎵</span>
-          <span class="btn-text">Download Music (MP3 320kbps)</span>
-          <span class="btn-loader" style="display: none;"></span>
-        </button>
+        <div class="button-group">
+          <button id="download-yt-current" class="download-current-btn youtube-btn">
+            <span class="btn-icon">🎵</span>
+            <span class="btn-text">Download Music (MP3)</span>
+            <span class="btn-loader" style="display: none;"></span>
+          </button>
+          <button id="download-yt-video-current" class="download-current-btn youtube-btn">
+            <span class="btn-icon">🎬</span>
+            <span class="btn-text">Download Video (MP4)</span>
+            <span class="btn-loader" style="display: none;"></span>
+          </button>
+        </div>
       </div>
 
       <div class="divider">
@@ -82,11 +89,17 @@
       </div>
 
       <div class="input-section">
-        <input type="text" id="yt-url" placeholder="Paste YouTube Shorts URL here...">
-        <button id="download-yt-btn" class="download-btn youtube-btn">
-          <span class="btn-text">Download Music</span>
-          <span class="btn-loader" style="display: none;"></span>
-        </button>
+        <input type="text" id="yt-url" placeholder="Paste YouTube URL here...">
+        <div class="button-group">
+          <button id="download-yt-btn" class="download-btn youtube-btn">
+            <span class="btn-text">Download Music</span>
+            <span class="btn-loader" style="display: none;"></span>
+          </button>
+          <button id="download-yt-video-btn" class="download-btn youtube-btn">
+            <span class="btn-text">Download Video</span>
+            <span class="btn-loader" style="display: none;"></span>
+          </button>
+        </div>
       </div>
     </div>
 

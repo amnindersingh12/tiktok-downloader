@@ -367,3 +367,29 @@ body {
 .youtube-btn:hover {
   box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4) !important;
 }
+.button-group {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-size: 12px;
+}
+
+.input-section .button-group {
+  gap: 8px;
+}
+
+.input-section .button-group .download-btn {
+  padding: 12px;
+  font-size: 13px;
+  width: 100%;
+}
